@@ -6,6 +6,7 @@ using System.Threading;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OBSWebsocketSharp
 {
@@ -14,41 +15,35 @@ namespace OBSWebsocketSharp
         private readonly WebSocket socket;
         private readonly string password;
         private ulong messageId = 0;
-        private readonly Dictionary<ulong, JObject> messages;
-        private readonly ushort timeout = 3000;
+        private readonly Dictionary<ulong, TaskCompletionSource<JObject>> messages;
 
         public OBSConnector(string url, string password)
         {
-            this.messages = new Dictionary<ulong, JObject>();
+            this.messages = new Dictionary<ulong, TaskCompletionSource<JObject>>();
             this.password = password;
             this.socket = new WebSocket(url.Contains("ws://") ? url : "ws://" + url);
-            this.socket.OnOpen += Authenticate;
             this.socket.OnMessage += OnMessage;
             this.socket.Connect();
+            this.Authenticate();
         }
 
         private void OnMessage(object sender, MessageEventArgs e)
         {
-            if (e.IsPing)
+            if (!e.IsText)
                 return;
             JObject message = JObject.Parse(e.Data);
             if (message["status"].ToString() != "ok")
                 throw new Exception(message["error"].ToString());
 
             if (message["message-id"].ToString() != "")
-                this.messages.Add(Convert.ToUInt64(message["message-id"].ToString()), message);
+                this.messages[Convert.ToUInt64(message["message-id"].ToString())].SetResult(message);
             else
                 throw new Exception("Message-id missing");
 
             Console.WriteLine(message);
         }
 
-        private void Authenticate(object sender, EventArgs e)
-        {
-            this.SendAuthentication(this.password);
-        }
-
-        private void SendAuthentication(string password)
+        private void Authenticate()
         {
             JObject response = this.Request("GetAuthRequired");
             bool authRequired = Convert.ToBoolean((string)response["authRequired"]);
@@ -56,7 +51,7 @@ namespace OBSWebsocketSharp
             {
                 string challenge = (string)response["challenge"];
                 string salt = (string)response["salt"];
-                using(SHA256 sha = SHA256.Create())
+                using (SHA256 sha = SHA256.Create())
                 {
                     string secretString = password + salt;
                     byte[] secretHash = sha.ComputeHash(Encoding.ASCII.GetBytes(secretString));
@@ -83,26 +78,20 @@ namespace OBSWebsocketSharp
 
             if (!this.socket.IsAlive)
                 throw new Exception("Websocket not alive!");
+
+            TaskCompletionSource<JObject> tcs = new TaskCompletionSource<JObject>();
+            this.messages.Add(this.messageId, tcs);
+
             this.socket.Send(requestObject.ToString());
 
-            JObject response = WaitForMessage(this.messageId);
-            return response;
+            tcs.Task.Wait();
+            if (tcs.Task.IsCanceled)
+                throw new Exception("Request canceled");
+            this.messages.Remove(this.messageId);
+
+            return tcs.Task.Result;
         }
 
-        private JObject WaitForMessage(ulong id)
-        {
-            for (ushort timeelapsed = 0; timeelapsed < this.timeout; timeelapsed++)
-            {
-                if (this.messages.ContainsKey(id))
-                {
-                    JObject response = this.messages[id];
-                    this.messages.Remove(id);
-                    return response;
-                }
-                Thread.Sleep(1);
-            }
-            throw new TimeoutException("Websocket-server did not respond in time.");
-        }
         #region Requests
         public OBSStats GetStats()
         {
