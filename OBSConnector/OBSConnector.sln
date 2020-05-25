@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBSWebsocketSharp", "OBSWebsocketSharp\OBSWebsocketSharp.csproj", "{C4373C9B-8666-4EFB-89EA-2CFAF5BFF434}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4373C9B-8666-4EFB-89EA-2CFAF5BFF434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4373C9B-8666-4EFB-89EA-2CFAF5BFF434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4373C9B-8666-4EFB-89EA-2CFAF5BFF434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4373C9B-8666-4EFB-89EA-2CFAF5BFF434}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7968C217-B539-40BB-B708-2CD798158BFE}
+	EndGlobalSection
+EndGlobal
