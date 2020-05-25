@@ -23,7 +23,7 @@
 
     public struct SpecialSources
     {
-        public string desktop1, desktop2, mic1, mic2, mic3, mic4;
+        public string desktop1, desktop2, mic1, mic2, mic3;
     }
 
     public struct StreamingStatus

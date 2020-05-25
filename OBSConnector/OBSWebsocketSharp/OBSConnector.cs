@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using System.Text;
@@ -10,12 +9,13 @@ using System.Threading.Tasks;
 
 namespace OBSWebsocketSharp
 {
-    public class OBSConnector
+    public partial class OBSConnector
     {
         private readonly WebSocket socket;
         private readonly string password;
         private ulong messageId = 0;
         private readonly Dictionary<ulong, TaskCompletionSource<JObject>> messages;
+
 
         public OBSConnector(string url, string password)
         {
@@ -32,15 +32,20 @@ namespace OBSWebsocketSharp
             if (!e.IsText)
                 return;
             JObject message = JObject.Parse(e.Data);
-            if (message["status"].ToString() != "ok")
-                throw new Exception(message["error"].ToString());
-
-            if (message["message-id"].ToString() != "")
-                this.messages[Convert.ToUInt64(message["message-id"].ToString())].SetResult(message);
+            if (message.ContainsKey("status") && message["status"].ToString() == "ok")
+            {
+                if (message.ContainsKey("message-id") && message["message-id"].ToString() != "")
+                    this.messages[Convert.ToUInt64(message["message-id"].ToString())].SetResult(message);
+                else
+                    throw new Exception("Message-id missing");
+            }
+            else if (message.ContainsKey("update-type"))
+                this.RaiseEvent(message);
             else
-                throw new Exception("Message-id missing");
-
-            Console.WriteLine(message);
+                throw new Exception(message["error"].ToString());
+            
+            //Console.ForegroundColor = ConsoleColor.Blue;
+            //Console.WriteLine("FROM:\n{0}", message.ToString());
         }
 
         private void Authenticate()
@@ -66,7 +71,7 @@ namespace OBSWebsocketSharp
             }
         }
 
-        private JObject Request(string requestType, params string[] parameters)
+        private JObject Request(string requestType, params object[] parameters)
         {
             JObject requestObject = new JObject
             {
@@ -74,7 +79,7 @@ namespace OBSWebsocketSharp
                 { "message-id", (++this.messageId).ToString() }
             };
             for (int param = 0; param < parameters.Length; param += 2)
-                requestObject.Add(parameters[param], parameters[param + 1]);
+                requestObject.Add((string)parameters[param], JToken.FromObject(parameters[param + 1]));
 
             if (!this.socket.IsAlive)
                 throw new Exception("Websocket not alive!");
@@ -82,6 +87,8 @@ namespace OBSWebsocketSharp
             TaskCompletionSource<JObject> tcs = new TaskCompletionSource<JObject>();
             this.messages.Add(this.messageId, tcs);
 
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine("TO:\n{0}", requestObject.ToString());
             this.socket.Send(requestObject.ToString());
 
             tcs.Task.Wait();
@@ -179,7 +186,7 @@ namespace OBSWebsocketSharp
         }
         public void StopOutput(bool force)
         {
-            _ = this.Request("StopOutput", "force", force.ToString());
+            _ = this.Request("StopOutput", "force", force);
         }
 
         public void StartStopRecording()
@@ -287,7 +294,7 @@ namespace OBSWebsocketSharp
 
         public void SetVolume(string source, double volume)
         {
-            _ = this.Request("SetVolume", "source", source, "volume", volume.ToString());
+            _ = this.Request("SetVolume", "source", source, "volume", volume);
         }
 
         public bool GetMute(string source)
@@ -298,7 +305,7 @@ namespace OBSWebsocketSharp
 
         public void SetMute(string source, bool mute)
         {
-            _ = this.Request("GetMute", "source", source, "mute", mute.ToString());
+            _ = this.Request("SetMute", "source", source, "mute", mute); ;
         }
 
         public void ToggleMute(string source)
@@ -308,7 +315,7 @@ namespace OBSWebsocketSharp
 
         public void SetSyncOffset(string source, int offset)
         {
-            _ = this.Request("SetSyncOffset", "source", source, "offset", offset.ToString());
+            _ = this.Request("SetSyncOffset", "source", source, "offset", offset);
         }
 
         public int GetSyncOffset(string source)
@@ -326,8 +333,7 @@ namespace OBSWebsocketSharp
                 desktop2 = (string)response["desktop-2"],
                 mic1 = (string)response["mic-1"],
                 mic2 = (string)response["mic-2"],
-                mic3 = (string)response["mic-3"],
-                mic4 = (string)response["mic-4"],
+                mic3 = (string)response["mic-3"]
             };
         }
 
@@ -340,7 +346,7 @@ namespace OBSWebsocketSharp
                 recording = Convert.ToBoolean((string)response["recording"]),
                 rectimecode = (string)response["rec-timecode"],
                 streaming = Convert.ToBoolean((string)response["streaming"]),
-                streamtimecode = (string)response["stream-timecode"],
+                streamtimecode = (string)response["stream-timecode"]
             };
         }
 
