@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
+using System.Text;
 
 namespace OBSWebsocketSharp
 {
@@ -49,7 +51,24 @@ namespace OBSWebsocketSharp
         private void SendAuthentication(string password)
         {
             JObject response = this.Request("GetAuthRequired");
-            throw new NotImplementedException();
+            bool authRequired = Convert.ToBoolean((string)response["authRequired"]);
+            if (authRequired)
+            {
+                string challenge = (string)response["challenge"];
+                string salt = (string)response["salt"];
+                using(SHA256 sha = SHA256.Create())
+                {
+                    string secretString = password + salt;
+                    byte[] secretHash = sha.ComputeHash(Encoding.ASCII.GetBytes(secretString));
+                    string secret = Convert.ToBase64String(secretHash);
+
+                    string authResponseString = secret + challenge;
+                    byte[] authResponseHash = sha.ComputeHash(Encoding.ASCII.GetBytes(authResponseString));
+                    string authResponse = Convert.ToBase64String(authResponseHash);
+
+                    this.Request("Authenticate", "auth", authResponse);
+                }
+            }
         }
 
         private JObject Request(string requestType, params string[] parameters)
