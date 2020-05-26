@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace OBSWebsocketSharp
 {
@@ -363,6 +364,13 @@ namespace OBSWebsocketSharp
         public void StopStreaming()
         {
             _ = this.Request("StopStreaming");
+        }
+
+        public JObject GetSourceSettings(string sourceName)
+        {
+
+            JObject response = this.Request("GetSourceSettings", "sourceName", sourceName);
+            return response;
         }
         #endregion
 

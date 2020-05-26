@@ -1,4 +1,5 @@
-﻿namespace OBSWebsocketSharp
+﻿
+namespace OBSWebsocketSharp
 {
     public struct Output
     {
