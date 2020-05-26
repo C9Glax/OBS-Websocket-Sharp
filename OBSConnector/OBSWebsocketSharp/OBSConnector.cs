@@ -336,11 +336,9 @@ namespace OBSWebsocketSharp
             JObject response = this.Request("GetStreamingStatus");
             return new StreamingStatus()
             {
-                previewonly = response["preview-only"].ToObject<bool>(),
                 recording = response["recording"].ToObject<bool>(),
-                rectimecode = response["rec-timecode"].ToObject<string>(),
+                recordingPaused = response["recording-paused"].ToObject<bool>(),
                 streaming = response["streaming"].ToObject<bool>(),
-                streamtimecode = response["stream-timecode"].ToObject<string>()
             };
         }
 

@@ -40,7 +40,6 @@ namespace OBSWebsocketSharp
 
     public struct StreamingStatus
     {
-        public bool streaming, recording, previewonly;
-        public string streamtimecode, rectimecode;
+        public bool streaming, recording, recordingPaused;
     }
 }
