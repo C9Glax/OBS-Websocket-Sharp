@@ -44,9 +44,6 @@ namespace OBSWebsocketSharp
                 this.RaiseEvent(message);
             else
                 throw new Exception(message["error"].ToString());
-            
-            //Console.ForegroundColor = ConsoleColor.Blue;
-            //Console.WriteLine("FROM:\n{0}", message.ToString());
         }
 
         private void Authenticate()
@@ -88,13 +85,12 @@ namespace OBSWebsocketSharp
             TaskCompletionSource<JObject> tcs = new TaskCompletionSource<JObject>();
             this.messages.Add(this.messageId, tcs);
 
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine("TO:\n{0}", requestObject.ToString());
             this.socket.Send(requestObject.ToString());
 
             tcs.Task.Wait();
             if (tcs.Task.IsCanceled)
                 throw new Exception("Request canceled");
+
             this.messages.Remove(this.messageId);
 
             return tcs.Task.Result;
@@ -122,15 +118,15 @@ namespace OBSWebsocketSharp
             JObject response = this.Request("GetVideoInfo");
             return new VideoInfo()
             {
-                baseHeight = Convert.ToInt32((string)response["baseHeight"]),
-                baseWidth = Convert.ToInt32((string)response["baseWidth"]),
-                colorRange = (string)response["colorRange"],
-                colorSpace = (string)response["colorSpace"],
-                fps = Convert.ToDouble((string)response["fps"]),
-                outputHeight = Convert.ToInt32((string)response["outputHeight"]),
-                outputWidth = Convert.ToInt32((string)response["outputWidth"]),
-                scaleType = (string)response["scaleType"],
-                videoFormat = (string)response["videoFormat"]
+                baseHeight = response["baseHeight"].ToObject<int>(),
+                baseWidth = response["baseWidth"].ToObject<int>(),
+                colorRange = response["colorRange"].ToObject<string>(),
+                colorSpace = response["colorSpace"].ToObject<string>(),
+                fps = response["fps"].ToObject<double>(),
+                outputHeight = response["outputHeight"].ToObject<int>(),
+                outputWidth = response["outputWidth"].ToObject<int>(),
+                scaleType = response["scaleType"].ToObject<string>(),
+                videoFormat = response["videoFormat"].ToObject<string>()
             };
         }
 
@@ -143,16 +139,16 @@ namespace OBSWebsocketSharp
             {
                 ret[i] = new Output()
                 {
-                    active = Convert.ToBoolean((string)outputs[i]["active"]),
-                    congestion = Convert.ToDouble((string)outputs[i]["congestion"]),
-                    droppedFrames = Convert.ToInt32((string)outputs[i]["droppedFrames"]),
-                    height = Convert.ToInt32((string)outputs[i]["height"]),
-                    width = Convert.ToInt32((string)outputs[i]["width"]),
-                    name = (string)outputs[i]["name"],
-                    reconnecting = Convert.ToBoolean((string)outputs[i]["reconnecting"]),
-                    totalBytes = Convert.ToInt32((string)outputs[i]["totalBytes"]),
-                    totalFrames = Convert.ToInt32((string)outputs[i]["totalFrames"]),
-                    type = (string)outputs[i]["type"]
+                    active = outputs[i]["active"].ToObject<bool>(),
+                    congestion = outputs[i]["congestion"].ToObject<double>(),
+                    droppedFrames = outputs[i]["droppedFrames"].ToObject<int>(),
+                    height = outputs[i]["height"].ToObject<int>(),
+                    width = outputs[i]["width"].ToObject<int>(),
+                    name = outputs[i]["name"].ToObject<string>(),
+                    reconnecting = outputs[i]["reconnecting"].ToObject<bool>(),
+                    totalBytes = outputs[i]["totalBytes"].ToObject<int>(),
+                    totalFrames = outputs[i]["totalFrames"].ToObject<int>(),
+                    type = outputs[i]["type"].ToObject<string>()
                 };
             }
             return ret;
@@ -163,16 +159,16 @@ namespace OBSWebsocketSharp
             JObject response = this.Request("GetOutputInfo", "outputName", outputName);
             return new Output()
             {
-                active = Convert.ToBoolean((string)response["outputInfo"]["active"]),
-                congestion = Convert.ToDouble((string)response["outputInfo"]["congestion"]),
-                droppedFrames = Convert.ToInt32((string)response["outputInfo"]["droppedFrames"]),
-                height = Convert.ToInt32((string)response["outputInfo"]["height"]),
-                width = Convert.ToInt32((string)response["outputInfo"]["width"]),
-                name = (string)response["outputInfo"]["name"],
-                reconnecting = Convert.ToBoolean((string)response["outputInfo"]["reconnecting"]),
-                totalBytes = Convert.ToInt32((string)response["outputInfo"]["totalBytes"]),
-                totalFrames = Convert.ToInt32((string)response["outputInfo"]["totalFrames"]),
-                type = (string)response["outputInfo"]["type"]
+                active = response["outputInfo"]["active"].ToObject<bool>(),
+                congestion = response["outputInfo"]["congestion"].ToObject<double>(),
+                droppedFrames = response["outputInfo"]["droppedFrames"].ToObject<int>(),
+                height = response["outputInfo"]["height"].ToObject<int>(),
+                width = response["outputInfo"]["width"].ToObject<int>(),
+                name = response["outputInfo"]["name"].ToObject<string>(),
+                reconnecting = response["outputInfo"]["reconnecting"].ToObject<bool>(),
+                totalBytes = response["outputInfo"]["totalBytes"].ToObject<int>(),
+                totalFrames = response["outputInfo"]["totalFrames"].ToObject<int>(),
+                type = response["outputInfo"]["type"].ToObject<string>()
             };
         }
 
@@ -223,7 +219,7 @@ namespace OBSWebsocketSharp
         public string GetRecordingFolder()
         {
             JObject response = this.Request("GetRecordingFolder");
-            return (string)response["rec-folder"];
+            return response["rec-folder"].ToObject<string>();
 
         }
 
@@ -253,7 +249,7 @@ namespace OBSWebsocketSharp
         public string GetCurrentSceneCollection()
         {
             JObject response = this.Request("GetCurrentSceneCollection");
-            return (string)response["sc-name"];
+            return response["sc-name"].ToObject<string>();
         }
 
         public string[] ListSceneCollections()
@@ -262,7 +258,7 @@ namespace OBSWebsocketSharp
             JToken[] outputs = response["scene-collections"].ToArray();
             string[] ret = new string[outputs.Length];
             for(short i = 0; i < outputs.Length; i++)
-                ret[i] = (string)outputs[i];
+                ret[i] = outputs[i].ToObject<string>();
             return ret;
         }
 
@@ -274,7 +270,7 @@ namespace OBSWebsocketSharp
         public string GetCurrentScene()
         {
             JObject response = this.Request("GetCurrentScene");
-            return (string)response["name"];
+            return response["name"].ToObject<string>();
         }
 
         public string[] GetSceneList()
@@ -283,14 +279,14 @@ namespace OBSWebsocketSharp
             JToken[] outputs = response["scenes"].ToArray();
             string[] ret = new string[outputs.Length];
             for (short i = 0; i < outputs.Length; i++)
-                ret[i] = (string)outputs[i]["name"];
+                ret[i] = outputs[i]["name"].ToObject<string>();
             return ret;
         }
 
         public double GetVolume(string source)
         {
             JObject response = this.Request("GetVolume", "source", source);
-            return Convert.ToDouble((string)response["volume"]);
+            return response["volume"].ToObject<double>();
         }
 
         public void SetVolume(string source, double volume)
@@ -301,7 +297,7 @@ namespace OBSWebsocketSharp
         public bool GetMute(string source)
         {
             JObject response = this.Request("GetMute", "source", source);
-            return Convert.ToBoolean((string)response["muted"]);
+            return response["muted"].ToObject<bool>();
         }
 
         public void SetMute(string source, bool mute)
@@ -322,20 +318,17 @@ namespace OBSWebsocketSharp
         public int GetSyncOffset(string source)
         {
             JObject response = this.Request("GetSyncOffset", "source", source);
-            return Convert.ToInt32((string)response["offset"]);
+            return response["offset"].ToObject<int>();
         }
 
         public SpecialSources GetSpecialSources()
         {
             JObject response = this.Request("GetSpecialSources");
-            return new SpecialSources()
-            {
-                desktop1 = (string)response["desktop-1"],
-                desktop2 = (string)response["desktop-2"],
-                mic1 = (string)response["mic-1"],
-                mic2 = (string)response["mic-2"],
-                mic3 = (string)response["mic-3"]
-            };
+            return new SpecialSources(response["desktop-1"].ToObject<string>(),
+                response["desktop-2"].ToObject<string>(),
+                response["mic-1"].ToObject<string>(),
+                response["mic-2"].ToObject<string>(),
+                response["mic-3"].ToObject<string>());
         }
 
         public StreamingStatus GetStreamingStatus()
@@ -343,11 +336,11 @@ namespace OBSWebsocketSharp
             JObject response = this.Request("GetStreamingStatus");
             return new StreamingStatus()
             {
-                previewonly = Convert.ToBoolean((string)response["preview-only"]),
-                recording = Convert.ToBoolean((string)response["recording"]),
-                rectimecode = (string)response["rec-timecode"],
-                streaming = Convert.ToBoolean((string)response["streaming"]),
-                streamtimecode = (string)response["stream-timecode"]
+                previewonly = response["preview-only"].ToObject<bool>(),
+                recording = response["recording"].ToObject<bool>(),
+                rectimecode = response["rec-timecode"].ToObject<string>(),
+                streaming = response["streaming"].ToObject<bool>(),
+                streamtimecode = response["stream-timecode"].ToObject<string>()
             };
         }
 
@@ -368,7 +361,6 @@ namespace OBSWebsocketSharp
 
         public JObject GetSourceSettings(string sourceName)
         {
-
             JObject response = this.Request("GetSourceSettings", "sourceName", sourceName);
             return response;
         }
