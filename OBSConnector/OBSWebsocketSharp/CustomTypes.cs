@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace OBSWebsocketSharp
 {
     public struct Output
@@ -24,7 +25,17 @@ namespace OBSWebsocketSharp
 
     public struct SpecialSources
     {
-        public string desktop1, desktop2, mic1, mic2, mic3;
+        public enum sourceType { desktop1, desktop2, mic1, mic2, mic3 };
+        public Dictionary<sourceType, string> sources;
+        public SpecialSources(string desktop1SourceName, string desktop2SourceName, string mic1SourceName, string mic2SourceName, string mic3SourceName)
+        {
+            sources = new Dictionary<sourceType, string>();
+            sources.Add(sourceType.desktop1, desktop1SourceName);
+            sources.Add(sourceType.desktop2, desktop2SourceName);
+            sources.Add(sourceType.mic1, mic1SourceName);
+            sources.Add(sourceType.mic2, mic2SourceName);
+            sources.Add(sourceType.mic3, mic3SourceName);
+        }
     }
 
     public struct StreamingStatus
