@@ -368,7 +368,7 @@ namespace OBSWebsocketSharp
         public string GetPIDOfAudioDevice(string sourceName)
         {
             JObject response = this.Request("GetSourceSettings", "sourceName", sourceName);
-            return response["sourceSettings"]["device_id"].ToObject<string>;
+            return response["sourceSettings"]["device_id"].ToObject<string>();
 
         }
         #endregion
