@@ -12,57 +12,51 @@ namespace OBSWebsocketSharp
         {
             public string newSceneName;
         }
+        public class OBSEventArgs : EventArgs
+        {
+        }
 
         public event OBSStreamStartingEventHandler OnOBSStreamStarting;
-        public delegate void OBSStreamStartingEventHandler(object sender, OBSStreamEventArgs e);
-        public class OBSStreamEventArgs : EventArgs
-        {
-        }
+        public delegate void OBSStreamStartingEventHandler(object sender, OBSEventArgs e);
 
         public event OBSStreamStartedEventHandler OnOBSStreamStarted;
-        public delegate void OBSStreamStartedEventHandler(object sender, OBSStreamEventArgs e);
+        public delegate void OBSStreamStartedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSStreamStoppingEventHandler OnOBSStreamStopping;
-        public delegate void OBSStreamStoppingEventHandler(object sender, OBSStreamEventArgs e);
+        public delegate void OBSStreamStoppingEventHandler(object sender, OBSEventArgs e);
 
         public event OBSStreamStoppedEventHandler OnOBSStreamStopped;
-        public delegate void OBSStreamStoppedEventHandler(object sender, OBSStreamEventArgs e);
+        public delegate void OBSStreamStoppedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSRecordingStartingEventHandler OnOBSRecordingStarting;
-        public delegate void OBSRecordingStartingEventHandler(object sender, OBSRecordingEventArgs e);
-        public class OBSRecordingEventArgs : EventArgs
-        {
-        }
+        public delegate void OBSRecordingStartingEventHandler(object sender, OBSEventArgs e);
 
         public event OBSRecordingStartedEventHandler OnOBSRecordingStarted;
-        public delegate void OBSRecordingStartedEventHandler(object sender, OBSRecordingEventArgs e);
+        public delegate void OBSRecordingStartedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSRecordingStoppingEventHandler OnOBSRecordingStopping;
-        public delegate void OBSRecordingStoppingEventHandler(object sender, OBSRecordingEventArgs e);
+        public delegate void OBSRecordingStoppingEventHandler(object sender, OBSEventArgs e);
 
         public event OBSRecordingStoppedEventHandler OnOBSRecordingStopped;
-        public delegate void OBSRecordingStoppedEventHandler(object sender, OBSRecordingEventArgs e);
+        public delegate void OBSRecordingStoppedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSRecordingPausedEventHandler OnOBSRecordingPaused;
-        public delegate void OBSRecordingPausedEventHandler(object sender, OBSRecordingEventArgs e);
+        public delegate void OBSRecordingPausedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSRecordingResumedEventHandler OnOBSRecordingResumed;
-        public delegate void OBSRecordingResumedEventHandler(object sender, OBSRecordingEventArgs e);
+        public delegate void OBSRecordingResumedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSReplayStartingEventHandler OnOBSReplayStarting;
-        public delegate void OBSReplayStartingEventHandler(object sender, OBSReplayEventArgs e);
-        public class OBSReplayEventArgs : EventArgs
-        {
-        }
+        public delegate void OBSReplayStartingEventHandler(object sender, OBSEventArgs e);
 
         public event OBSReplayStartedEventHandler OnOBSReplayStarted;
-        public delegate void OBSReplayStartedEventHandler(object sender, OBSReplayEventArgs e);
+        public delegate void OBSReplayStartedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSReplayStoppingEventHandler OnOBSReplayStopping;
-        public delegate void OBSReplayStoppingEventHandler(object sender, OBSReplayEventArgs e);
+        public delegate void OBSReplayStoppingEventHandler(object sender, OBSEventArgs e);
 
         public event OBSReplayStoppedEventHandler OnOBSReplayStopped;
-        public delegate void OBSReplayStoppedEventHandler(object sender, OBSReplayEventArgs e);
+        public delegate void OBSReplayStoppedEventHandler(object sender, OBSEventArgs e);
 
         public event OBSSourceVolumeChangedEventHandler OnOBSSourceVolumeChanged;
         public delegate void OBSSourceVolumeChangedEventHandler(object sender, OBSSourceVolumeChangedEventArgs e);
@@ -98,46 +92,46 @@ namespace OBSWebsocketSharp
                     });
                     break;
                 case "StreamStarting":
-                    OnOBSStreamStarting?.Invoke(this, new OBSStreamEventArgs());
+                    OnOBSStreamStarting?.Invoke(this, new OBSEventArgs());
                     break;
                 case "StreamStarted":
-                    OnOBSStreamStarted?.Invoke(this, new OBSStreamEventArgs());
+                    OnOBSStreamStarted?.Invoke(this, new OBSEventArgs());
                     break;
                 case "StreamStopping":
-                    OnOBSStreamStopping?.Invoke(this, new OBSStreamEventArgs());
+                    OnOBSStreamStopping?.Invoke(this, new OBSEventArgs());
                     break;
                 case "StreamStopped":
-                    OnOBSStreamStopped?.Invoke(this, new OBSStreamEventArgs());
+                    OnOBSStreamStopped?.Invoke(this, new OBSEventArgs());
                     break;
                 case "RecordingStarting":
-                    OnOBSRecordingStarting?.Invoke(this, new OBSRecordingEventArgs());
+                    OnOBSRecordingStarting?.Invoke(this, new OBSEventArgs());
                     break;
                 case "RecordingStarted":
-                    OnOBSRecordingStarted?.Invoke(this, new OBSRecordingEventArgs());
+                    OnOBSRecordingStarted?.Invoke(this, new OBSEventArgs());
                     break;
                 case "RecordingStopping":
-                    OnOBSRecordingStopping?.Invoke(this, new OBSRecordingEventArgs());
+                    OnOBSRecordingStopping?.Invoke(this, new OBSEventArgs());
                     break;
                 case "RecordingStopped":
-                    OnOBSRecordingStopped?.Invoke(this, new OBSRecordingEventArgs());
+                    OnOBSRecordingStopped?.Invoke(this, new OBSEventArgs());
                     break;
                 case "RecordingPaused":
-                    OnOBSRecordingPaused?.Invoke(this, new OBSRecordingEventArgs());
+                    OnOBSRecordingPaused?.Invoke(this, new OBSEventArgs());
                     break;
                 case "RecordingResumed":
-                    OnOBSRecordingResumed?.Invoke(this, new OBSRecordingEventArgs());
+                    OnOBSRecordingResumed?.Invoke(this, new OBSEventArgs());
                     break;
                 case "ReplayStarting":
-                    OnOBSReplayStarting?.Invoke(this, new OBSReplayEventArgs());
+                    OnOBSReplayStarting?.Invoke(this, new OBSEventArgs());
                     break;
                 case "ReplayStarted":
-                    OnOBSReplayStarted?.Invoke(this, new OBSReplayEventArgs());
+                    OnOBSReplayStarted?.Invoke(this, new OBSEventArgs());
                     break;
                 case "ReplayStopping":
-                    OnOBSReplayStopping?.Invoke(this, new OBSReplayEventArgs());
+                    OnOBSReplayStopping?.Invoke(this, new OBSEventArgs());
                     break;
                 case "ReplayStopped":
-                    OnOBSReplayStopped?.Invoke(this, new OBSReplayEventArgs());
+                    OnOBSReplayStopped?.Invoke(this, new OBSEventArgs());
                     break;
                 case "SourceVolumeChanged":
                     OnOBSSourceVolumeChanged?.Invoke(this, new OBSSourceVolumeChangedEventArgs()
@@ -161,7 +155,6 @@ namespace OBSWebsocketSharp
                     });
                     break;
                 default:
-                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Event not implemented: {0}", (string)message["update-type"]);
                     break;
             }
