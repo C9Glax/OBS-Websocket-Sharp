@@ -23,9 +23,9 @@ namespace OBSWebsocketSharp
         public string videoFormat, colorSpace, colorRange, scaleType;
     }
 
+    public enum sourceType { desktop1, desktop2, mic1, mic2, mic3 };
     public struct SpecialSources
     {
-        public enum sourceType { desktop1, desktop2, mic1, mic2, mic3 };
         public Dictionary<sourceType, string> sources;
         public SpecialSources(string desktop1SourceName, string desktop2SourceName, string mic1SourceName, string mic2SourceName, string mic3SourceName)
         {
