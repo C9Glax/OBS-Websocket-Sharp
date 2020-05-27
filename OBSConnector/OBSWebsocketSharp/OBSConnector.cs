@@ -28,6 +28,11 @@ namespace OBSWebsocketSharp
             this.Authenticate();
         }
 
+        public void Close()
+        {
+            this.socket.Close();
+        }
+
         private void OnMessage(object sender, MessageEventArgs e)
         {
             if (!e.IsText)
