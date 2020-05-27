@@ -51,6 +51,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="OBSConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
