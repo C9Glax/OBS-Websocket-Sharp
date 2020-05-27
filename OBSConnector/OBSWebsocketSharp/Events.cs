@@ -91,12 +91,12 @@ namespace OBSWebsocketSharp
 
         protected virtual void RaiseEvent(JObject message)
         {
-            switch ((string)message["update-type"])
+            switch (message["update-type"].ToObject<string>())
             {
                 case "SwitchScenes":
                     OnSceneSwitched?.Invoke(this, new SceneSwitchedEventArgs()
                     {
-                        newSceneName = (string)message["scene-name"]
+                        newSceneName = message["scene-name"].ToObject<string>()
                     });
                     break;
                 case "StreamStarting":
@@ -144,22 +144,22 @@ namespace OBSWebsocketSharp
                 case "SourceVolumeChanged":
                     OnSourceVolumeChanged?.Invoke(this, new SourceVolumeChangedEventArgs()
                     {
-                        sourcename = (string)message["sourceName"],
-                        sourcevolume = Convert.ToSingle((string)message["volume"])
+                        sourcename = message["sourceName"].ToObject<string>(),
+                        sourcevolume = Convert.ToSingle(message["volume"].ToObject<string>())
                     });
                     break;
                 case "SourceMuteStateChanged":
                     OnSourceMuteChanged?.Invoke(this, new SourceMuteChangedEventArgs()
                     {
-                        sourcename = (string)message["sourceName"],
-                        muted = Convert.ToBoolean((string)message["muted"])
+                        sourcename = message["sourceName"].ToObject<string>(),
+                        muted = message["muted"].ToObject<bool>()
                     });
                     break;
                 case "SourceSourceRenamed":
                     OnSourceRenamed?.Invoke(this, new SourceRenamedEventArgs()
                     {
-                        previousName = (string)message["previousName"],
-                        newName = (string)message["newName"]
+                        previousName = message["previousName"].ToObject<string>(),
+                        newName = message["newName"].ToObject<string>()
                     });
                     break;
                 case "StreamStatus":
@@ -168,7 +168,8 @@ namespace OBSWebsocketSharp
                         status = new StreamStatus()
                         {
                             recording = message["recording"].ToObject<bool>(),
-                            replayBufferActive = message["replay-buffer-active	"].ToObject<bool>(),
+                            recordingPaused = message["recording-paused"].ToObject<bool>(),
+                            replayBufferActive = message["replay-buffer-active"].ToObject<bool>(),
                             streaming = message["streaming"].ToObject<bool>(),
                             bytesPerSec = message["bytes-per-sec"].ToObject<int>(),
                             kbitsPerSec = message["kbits-per-sec"].ToObject<int>(),
