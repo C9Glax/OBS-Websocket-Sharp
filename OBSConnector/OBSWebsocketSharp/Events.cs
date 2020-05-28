@@ -1,11 +1,33 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.IO;
 
 namespace OBSWebsocketSharp
 {
     public partial class OBSConnector
     {
+        public class OBSWebsocketEventArgs : EventArgs
+        {
+            public string text;
+        }
+        public delegate void OBSWebsocketEventHandler(object sender, OBSWebsocketEventArgs e);
+        public event OBSWebsocketEventHandler OnOBSWebsocketInfo, OnOBSWebsocketWarning;
+
+        public class OBSEventArgs : EventArgs { }
+        public delegate void OBSEventHandler(object sender, OBSEventArgs e);
+        public event OBSEventHandler OnStreamStarting,
+            OnStreamStarted,
+            OnStreamStopping,
+            OnStreamStopped,
+            OnRecordingStarting,
+            OnRecordingStarted,
+            OnRecordingStopping,
+            OnRecordingStopped,
+            OnRecordingPaused,
+            OnRecordingResumed,
+            OnReplayStarting,
+            OnReplayStarted,
+            OnReplayStopping,
+            OnReplayStopped;
 
         public event SceneSwitchedEventHandler OnSceneSwitched;
         public delegate void SceneSwitchedEventHandler(object sender, SceneSwitchedEventArgs e);
@@ -13,51 +35,6 @@ namespace OBSWebsocketSharp
         {
             public string newSceneName;
         }
-        public class OBSEventArgs : EventArgs
-        {
-        }
-
-        public event StreamStartingEventHandler OnStreamStarting;
-        public delegate void StreamStartingEventHandler(object sender, OBSEventArgs e);
-
-        public event StreamStartedEventHandler OnStreamStarted;
-        public delegate void StreamStartedEventHandler(object sender, OBSEventArgs e);
-
-        public event StreamStoppingEventHandler OnStreamStopping;
-        public delegate void StreamStoppingEventHandler(object sender, OBSEventArgs e);
-
-        public event StreamStoppedEventHandler OnStreamStopped;
-        public delegate void StreamStoppedEventHandler(object sender, OBSEventArgs e);
-
-        public event RecordingStartingEventHandler OnRecordingStarting;
-        public delegate void RecordingStartingEventHandler(object sender, OBSEventArgs e);
-
-        public event RecordingStartedEventHandler OnRecordingStarted;
-        public delegate void RecordingStartedEventHandler(object sender, OBSEventArgs e);
-
-        public event RecordingStoppingEventHandler OnRecordingStopping;
-        public delegate void RecordingStoppingEventHandler(object sender, OBSEventArgs e);
-
-        public event RecordingStoppedEventHandler OnRecordingStopped;
-        public delegate void RecordingStoppedEventHandler(object sender, OBSEventArgs e);
-
-        public event RecordingPausedEventHandler OnRecordingPaused;
-        public delegate void RecordingPausedEventHandler(object sender, OBSEventArgs e);
-
-        public event RecordingResumedEventHandler OnRecordingResumed;
-        public delegate void RecordingResumedEventHandler(object sender, OBSEventArgs e);
-
-        public event ReplayStartingEventHandler OnReplayStarting;
-        public delegate void ReplayStartingEventHandler(object sender, OBSEventArgs e);
-
-        public event ReplayStartedEventHandler OnReplayStarted;
-        public delegate void ReplayStartedEventHandler(object sender, OBSEventArgs e);
-
-        public event ReplayStoppingEventHandler OnReplayStopping;
-        public delegate void ReplayStoppingEventHandler(object sender, OBSEventArgs e);
-
-        public event ReplayStoppedEventHandler OnReplayStopped;
-        public delegate void ReplayStoppedEventHandler(object sender, OBSEventArgs e);
 
         public event SourceVolumeChangedEventHandler OnSourceVolumeChanged;
         public delegate void SourceVolumeChangedEventHandler(object sender, SourceVolumeChangedEventArgs e);
@@ -190,7 +167,10 @@ namespace OBSWebsocketSharp
                     });
                     break;
                 default:
-                    Console.WriteLine("Event not implemented: {0}", (string)message["update-type"]);
+                    this.OnOBSWebsocketInfo?.Invoke(this, new OBSWebsocketEventArgs()
+                    {
+                        text = string.Format("Event not implemented: {0}", (string)message["update-type"])
+                    });
                     break;
             }
         }

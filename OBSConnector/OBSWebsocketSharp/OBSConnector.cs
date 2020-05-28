@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace OBSWebsocketSharp
 {
@@ -43,12 +41,18 @@ namespace OBSWebsocketSharp
                 if (message.ContainsKey("message-id") && message["message-id"].ToString() != "")
                     this.messages[Convert.ToUInt64(message["message-id"].ToString())].SetResult(message);
                 else
-                    throw new Exception("Message-id missing");
+                    this.OnOBSWebsocketWarning?.Invoke(this, new OBSWebsocketEventArgs()
+                    {
+                        text = "Message-id missing"
+                    });
             }
             else if (message.ContainsKey("update-type"))
                 this.RaiseEvent(message);
             else
-                throw new Exception(message["error"].ToString());
+                this.OnOBSWebsocketWarning?.Invoke(this, new OBSWebsocketEventArgs()
+                {
+                    text = message["error"].ToString()
+                });
         }
 
         private void Authenticate()
@@ -85,7 +89,10 @@ namespace OBSWebsocketSharp
                 requestObject.Add((string)parameters[param], JToken.FromObject(parameters[param + 1]));
 
             if (!this.socket.IsAlive)
-                throw new Exception("Websocket not alive!");
+                this.OnOBSWebsocketWarning?.Invoke(this, new OBSWebsocketEventArgs()
+                {
+                    text = "Websocket not Alive!"
+                });
 
             TaskCompletionSource<JObject> tcs = new TaskCompletionSource<JObject>();
             this.messages.Add(this.messageId, tcs);
@@ -94,7 +101,10 @@ namespace OBSWebsocketSharp
 
             tcs.Task.Wait();
             if (tcs.Task.IsCanceled)
-                throw new Exception("Request canceled");
+                this.OnOBSWebsocketInfo?.Invoke(this, new OBSWebsocketEventArgs()
+                {
+                    text = "Request Canceled"
+                });
 
             this.messages.Remove(this.messageId);
 
