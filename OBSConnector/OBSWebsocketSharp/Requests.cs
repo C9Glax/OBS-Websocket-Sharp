@@ -245,9 +245,7 @@ namespace OBSWebsocketSharp
                     type = source["type"].ToObject<string>(),
                     id = source["id"].ToObject<int>(),
                     render = source["render"].ToObject<bool>(),
-                    muted = source["muted"].ToObject<bool>(),
-                    source_cx = source["sceneitem_cx"].ToObject<int>(),
-                    source_cy = source["sceneitem_cy"].ToObject<int>()
+                    muted = source["muted"].ToObject<bool>()
                 });
             return new GetCurrentSceneObject()
             {
@@ -277,9 +275,7 @@ namespace OBSWebsocketSharp
                         type = source["type"].ToObject<string>(),
                         id = source["id"].ToObject<int>(),
                         render = source["render"].ToObject<bool>(),
-                        muted = source["muted"].ToObject<bool>(),
-                        source_cx = source["sceneitem_cx"].ToObject<int>(),
-                        source_cy = source["sceneitem_cy"].ToObject<int>()
+                        muted = source["muted"].ToObject<bool>()
                     });
                 scenes.Add(new Scene()
                 {
@@ -476,8 +472,8 @@ namespace OBSWebsocketSharp
                 recordingPaused = response["recording-paused"].ToObject<bool>(),
                 streaming = response["streaming"].ToObject<bool>(),
                 previewOnly = response["preview-only"].ToObject<bool>(),
-                streamTimecode = response["stream-timecode"].ToObject<string>(),
-                recTimecode = response["rec -timecode"].ToObject<string>()
+                streamTimecode = response.ContainsKey("stream-timecode") ? response["stream-timecode"].ToObject<string>() : string.Empty,
+                recTimecode = response.ContainsKey("rec-timecode") ? response["rec-timecode"].ToObject<string>() : string.Empty
             };
         }
 
