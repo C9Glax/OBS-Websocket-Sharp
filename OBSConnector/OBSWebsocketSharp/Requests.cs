@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OBSWebsocketSharp
 {
@@ -236,11 +233,17 @@ namespace OBSWebsocketSharp
         public SpecialSources GetSpecialSources()
         {
             JObject response = this.Request("GetSpecialSources");
-            return new SpecialSources(response["desktop-1"].ToObject<string>(),
-                response["desktop-2"].ToObject<string>(),
-                response["mic-1"].ToObject<string>(),
-                response["mic-2"].ToObject<string>(),
-                response["mic-3"].ToObject<string>());
+            return new SpecialSources()
+            {
+                sources = {
+                    { SpecialSourceType.desktop1, response["desktop-1"].ToObject<string>() },
+                    { SpecialSourceType.desktop2, response["desktop-2"].ToObject<string>() },
+                    { SpecialSourceType.mic1, response["mic-1"].ToObject<string>() },
+                    { SpecialSourceType.mic2, response["mic-2"].ToObject<string>() },
+                    { SpecialSourceType.mic3, response["mic-3"].ToObject<string>() }
+                }
+                
+            };
         }
 
         public StreamStatus GetStreamingStatus()
