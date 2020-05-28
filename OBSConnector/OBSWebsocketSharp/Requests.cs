@@ -235,7 +235,7 @@ namespace OBSWebsocketSharp
             JObject response = this.Request("GetSpecialSources");
             return new SpecialSources()
             {
-                sources = {
+                sources = new System.Collections.Generic.Dictionary<SpecialSourceType, string>(){
                     { SpecialSourceType.desktop1, response["desktop-1"].ToObject<string>() },
                     { SpecialSourceType.desktop2, response["desktop-2"].ToObject<string>() },
                     { SpecialSourceType.mic1, response["mic-1"].ToObject<string>() },
