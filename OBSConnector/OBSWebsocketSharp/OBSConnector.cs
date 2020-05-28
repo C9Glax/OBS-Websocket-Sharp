@@ -36,6 +36,7 @@ namespace OBSWebsocketSharp
             if (!e.IsText)
                 return;
             JObject message = JObject.Parse(e.Data);
+            this.OnOBSMessageReceived?.Invoke(this, new OBSMessageEventArgs() { message = message });
             if (message.ContainsKey("status") && message["status"].ToString() == "ok")
             {
                 if (message.ContainsKey("message-id") && message["message-id"].ToString() != "")
@@ -78,7 +79,7 @@ namespace OBSWebsocketSharp
             }
         }
 
-        private JObject Request(string requestType, params object[] parameters)
+        public JObject Request(string requestType, params object[] parameters)
         {
             JObject requestObject = new JObject
             {
