@@ -76,9 +76,9 @@ namespace OBSWebsocketSharp
         public Output[] ListOutputs()
         {
             JObject response = this.Request("ListOutputs");
-            List<Output> ret = new List<Output>();
+            List<Output> outputs = new List<Output>();
             foreach(JObject output in response["outputs"])
-                ret.Add(new Output()
+                outputs.Add(new Output()
                 {
                     active = output["active"].ToObject<bool>(),
                     congestion = output["congestion"].ToObject<double>(),
@@ -91,7 +91,7 @@ namespace OBSWebsocketSharp
                     totalFrames = output["totalFrames"].ToObject<int>(),
                     type = output["type"].ToObject<string>()
                 });
-            return ret.ToArray();
+            return outputs.ToArray();
         }
 
         public Output GetOutputInfo(string outputName)
@@ -321,7 +321,7 @@ namespace OBSWebsocketSharp
             JObject response = this.Request("GetSourcesList");
             List<Source> sources = new List<Source>();
             foreach (JObject source in response["sources"])
-                source.Add(new Source()
+                sources.Add(new Source()
                 {
                     name = source["name"].ToObject<string>(),
                     typeId = source["typeId"].ToObject<string>(),
