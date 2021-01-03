@@ -49,11 +49,15 @@ namespace OBSWebsocketSharp
             }
             else if (message.ContainsKey("update-type"))
                 this.RaiseEvent(message);
-            else
+            else if (message.ContainsKey("message-id"))
+            {
+                this.messages[Convert.ToUInt64(message["message-id"].ToString())].SetResult(message);
                 this.OnOBSWebsocketWarning?.Invoke(this, new OBSWebsocketEventArgs()
                 {
                     text = message["error"].ToString()
                 });
+            }
+                
         }
 
         private void Authenticate()
